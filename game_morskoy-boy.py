@@ -56,7 +56,11 @@ def button_show_enemy():
                 list_ids.append(_id)
 
 def button_begin_again():
-    pass
+    global list_ids
+    for el in list_ids:
+        canvas.delete(el)
+    list_ids = []
+    generate_enemy_ships()
 
 b0 = Button(tk, text="Показать корабли противника", command=button_show_enemy)
 b0.place(x=size_canvas_x + 20, y=30)
