@@ -22,6 +22,7 @@ enemy_ships = [[0 for i in range(s_x + 1)] for i in range(s_y + 1)]
 list_ids = []
 
 # print(enemy_ships)
+points = [[-1 for i in range(s_x)] for i in range(s_y)]
 
 def on_closing():
     global app_running
@@ -51,16 +52,21 @@ def button_show_enemy():
     for i in range(0, s_x):
         for j in range(0, s_y):
             if enemy_ships[j][i] > 0:
+                color = 'red'
+                if point[j][i] != -1:
+                    color = 'green'
                 _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y,
-                                              fill="red")
+                                              fill=color)
                 list_ids.append(_id)
 
 def button_begin_again():
     global list_ids
+    global points
     for el in list_ids:
         canvas.delete(el)
     list_ids = []
     generate_enemy_ships()
+    points = [[-1 for i in range(s_x)] for i in range(s_y)]
 
 b0 = Button(tk, text="Показать корабли противника", command=button_show_enemy)
 b0.place(x=size_canvas_x + 20, y=30)
@@ -96,7 +102,10 @@ def add_to_all(event):
     ip_y = mouse_y // step_y
     print(ip_x, ip_y, "_type:", _type)
     if ip_x < s_x and ip_y < s_y:
-        draw_point(ip_x, ip_y)
+        if points[ip_y][ip_x] == -1:
+            points[ip_y][ip_x] = _type
+            draw_point(ip_x, ip_y)
+        print(len(list_ids))
 
 canvas.bind_all("<Button-1>", add_to_all)
 canvas.bind_all("<Button-3>", add_to_all)
