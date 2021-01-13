@@ -53,7 +53,7 @@ def button_show_enemy():
         for j in range(0, s_y):
             if enemy_ships[j][i] > 0:
                 color = 'red'
-                if point[j][i] != -1:
+                if points[j][i] != -1:
                     color = 'green'
                 _id = canvas.create_rectangle(i * step_x, j * step_y, i * step_x + step_x, j * step_y + step_y,
                                               fill=color)
@@ -89,8 +89,17 @@ def draw_point(x, y):
         list_ids.append(id1)
         list_ids.append(id2)
 
+def check_winner():
+    win = True
+    for i in range(0, s_x):
+            for j in range(0, s_y):
+                if enemy_ships[j][i] > 0:
+                    if points[j][i] == -1:
+                        win = False
+    return win
 
 def add_to_all(event):
+    global points
     _type = 0
     if event.num == 3:
         _type = 1
@@ -105,6 +114,9 @@ def add_to_all(event):
         if points[ip_y][ip_x] == -1:
             points[ip_y][ip_x] = _type
             draw_point(ip_x, ip_y)
+            if check_winner():
+                print('Победа!')
+                points = [[10 for i in range(s_x)] for i in range(s_y)]
         print(len(list_ids))
 
 canvas.bind_all("<Button-1>", add_to_all)
