@@ -13,7 +13,8 @@ step_x = size_canvas_x // s_x
 step_y = size_canvas_y // s_y
 size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
-menu_x = 250
+menu_x = step_x * 4 #250
+menu_y = 40
 ships = s_x // 2
 ship_len1 = s_x // 5
 ship_len2 = s_x // 3
@@ -35,18 +36,28 @@ tk.protocol("WM_DELETE_WINDOW", on_closing)
 tk.title("Игра Морской Бой")
 tk.resizable(0, 0)
 tk.wm_attributes("-topmost", 1)
-canvas = Canvas(tk, width=size_canvas_x + menu_x, height=size_canvas_y, bd=0, highlightthickness=0)
+canvas = Canvas(tk, width=size_canvas_x + menu_x + size_canvas_x, height=size_canvas_y + menu_y, bd=0, highlightthickness=0)
 canvas.create_rectangle(0, 0, size_canvas_x, size_canvas_y, fill="white")
+canvas.create_rectangle(size_canvas_x + menu_x, 0, size_canvas_x + menu_x + size_canvas_x, size_canvas_y, fill="lightyellow")
 canvas.pack()
 tk.update()
 
-def draw_table():
+def draw_table(offset_x=0):
     for i in range(0, s_x + 1):
-        canvas.create_line(step_x * i, 0, step_x * i, size_canvas_y)
+        canvas.create_line(offset_x + step_x * i, 0, offset_x + step_x * i, size_canvas_y)
     for i in range(0, s_y + 1):
-        canvas.create_line(0, step_y * i, size_canvas_x, step_y * i)
+        canvas.create_line(offset_x, step_y * i, offset_x + size_canvas_x, step_y * i)
 
 draw_table()
+draw_table(size_canvas_x + menu_x)
+
+t0 = Label(tk, text='Игрок №1', font=('Helvetica', 16))
+t0.place(x=size_canvas_x//2 - t0.winfo_reqwidth()//2, y=size_canvas_y+3)
+t1 = Label(tk, text='Игрок №2', font=('Helvetica', 16))
+t1.place(x=size_canvas_x + menu_x + size_canvas_x//2 - t1.winfo_reqwidth()//2, y=size_canvas_y+3)
+
+t0.configure(bg='red')
+t0.configure(bg='#f0f0f0')
 
 def button_show_enemy():
     for i in range(0, s_x):
