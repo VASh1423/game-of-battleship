@@ -27,6 +27,8 @@ list_ids = []
 points1 = [[-1 for i in range(s_x)] for i in range(s_y)]
 points2 = [[-1 for i in range(s_x)] for i in range(s_y)]
 
+ships_list = []
+
 def on_closing():
     global app_running
     if messagebox.askokcancel("Выход из игры", "Хотите выйти из игры?"):
@@ -90,6 +92,7 @@ def button_begin_again():
     for el in list_ids:
         canvas.delete(el)
     list_ids = []
+    generate_ships_list()
     enemy_ships1 = generate_enemy_ships()
     enemy_ships2 = generate_enemy_ships()
     points1 = [[-1 for i in range(s_x)] for i in range(s_y)]
@@ -152,14 +155,18 @@ def add_to_all(event):
 canvas.bind_all("<Button-1>", add_to_all)
 canvas.bind_all("<Button-3>", add_to_all)
 
-def generate_enemy_ships():
-    enemy_ships = []
+def generate_ships_list():
+    global ships_list
     ships_list = []
     # генерируем список случайных длин кораблей
     for i in range(0, ships):
         ships_list.append(random.choice([ship_len1, ship_len2, ship_len3]))
     #print(ships_list)
 
+def generate_enemy_ships():
+    global ships_list
+    enemy_ships = []
+    
     # подсчет суммарной длины кораблей
     sum_1_all_ships = sum(ships_list)
     sum_1_enemy = 0
@@ -227,8 +234,9 @@ def generate_enemy_ships():
         # print(sum_1_enemy)
         # print(ships_list)
         print(enemy_ships)
-        return(enemy_ships)
+    return(enemy_ships)
 
+generate_ships_list()
 enemy_ships1 = generate_enemy_ships()
 enemy_ships2 = generate_enemy_ships()
 
