@@ -13,7 +13,8 @@ step_x = size_canvas_x // s_x
 step_y = size_canvas_y // s_y
 size_canvas_x = step_x * s_x
 size_canvas_y = step_y * s_y
-menu_x = step_x * 4 #250
+delta_menu_x = 4
+menu_x = step_x * delta_menu_x #250
 menu_y = 40
 ships = s_x // 2
 ship_len1 = s_x // 5
@@ -108,7 +109,7 @@ b2 = Button(tk, text="Начать заново!", command=button_begin_again)
 b2.place(x=size_canvas_x + 20, y=110)
 
 def draw_point(x, y):
-    print(enemy_ships1[y][x])
+    # print(enemy_ships1[y][x])
     if enemy_ships1[y][x] == 0:
         color = 'red'
         id1 = canvas.create_oval(x * step_x, y * step_y, x * step_x + step_x, y * step_y + step_y, fill=color)
@@ -122,6 +123,24 @@ def draw_point(x, y):
         list_ids.append(id1)
         list_ids.append(id2)
 
+def draw_point2(x, y, offset_x=size_canvas_x + menu_x):
+    # print(enemy_ships1[y][x])
+    if enemy_ships2[y][x] == 0:
+        color = "red"
+        id1 = canvas.create_oval(offset_x + x * step_x, y * step_y, offset_x + x * step_x + step_x, y * step_y + step_y, fill=color)
+        id2 = canvas.create_oval(offset_x + x * step_x + step_x // 3, y * step_y + step_y // 3, offset_x + x * step_x + step_x - step_x // 3,
+                                 y * step_y + step_y - step_y // 3, fill="white")
+        list_ids.append(id1)
+        list_ids.append(id2)
+    if enemy_ships2[y][x] > 0:
+        color = "blue"
+        id1 = canvas.create_rectangle(offset_x + x * step_x, y * step_y + step_y // 2 - step_y // 10, offset_x + x * step_x + step_x,
+                                      y * step_y + step_y // 2 + step_y // 10, fill=color)
+        id2 = canvas.create_rectangle(offset_x + x * step_x + step_x // 2 - step_x // 10, y * step_y,
+                                      offset_x + x * step_x + step_x // 2 + step_x // 10, y * step_y + step_y, fill=color)
+        list_ids.append(id1)
+        list_ids.append(id2)
+
 def check_winner():
     win = True
     for i in range(0, s_x):
@@ -131,8 +150,17 @@ def check_winner():
                         win = False
     return win
 
+def check_winner2():
+    win = True
+    for i in range(0, s_x):
+            for j in range(0, s_y):
+                if enemy_ships2[j][i] > 0:
+                    if points2[j][i] == -1:
+                        win = False
+    return win
+
 def add_to_all(event):
-    global points1
+    global points1, points2
     _type = 0
     if event.num == 3:
         _type = 1
@@ -142,15 +170,50 @@ def add_to_all(event):
     # print(mouse_x, mouse_y)
     ip_x = mouse_x // step_x
     ip_y = mouse_y // step_y
-    print(ip_x, ip_y, "_type:", _type)
+    # print(ip_x, ip_y, "_type:", _type)
     if ip_x < s_x and ip_y < s_y:
         if points1[ip_y][ip_x] == -1:
             points1[ip_y][ip_x] = _type
             draw_point(ip_x, ip_y)
             if check_winner():
-                print('Победа!')
+                winner = "Победа Игрока №2"
+                winner_add = "(Все корабли противника Игрока №1 подбиты)!!!!!"
+                print(winner, winner_add)
                 points1 = [[10 for i in range(s_x)] for i in range(s_y)]
-        print(len(list_ids))
+                points2 = [[10 for i in range(s_x)] for i in range(s_y)]
+                id1 = canvas.create_rectangle(step_x*3, step_y*3, size_canvas_x + menu_x + size_canvas_x-step_x*3, size_canvas_y-step_y, fill="blue")
+                list_ids.append(id1)
+                id2 = canvas.create_rectangle(step_x * 3+step_x//2, step_y * 3+step_y//2,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x//2,
+                                              size_canvas_y - step_y - step_y//2, fill="yellow")
+                list_ids.append(id2)
+                id3 = canvas.create_text(step_x*12, step_y*5, text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(step_x * 12, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                list_ids.append(id3)
+                list_ids.append(id4)
+        # print(len(list_ids))
+    if ip_x >= s_x + delta_menu_x and ip_x <= s_x + s_x + delta_menu_x and ip_y < s_y:
+        if points2[ip_y][ip_x - s_x - delta_menu_x] == -1:
+            points2[ip_y][ip_x - s_x - delta_menu_x] = _type
+            draw_point2(ip_x - s_x - delta_menu_x, ip_y)
+            if check_winner2():
+                winner = "Победа Игрока №1"
+                winner_add = "(Все корабли противника Игрока №2 подбиты)!!!!!"
+                print(winner, winner_add)
+                points1 = [[10 for i in range(s_x)] for i in range(s_y)]
+                points2 = [[10 for i in range(s_x)] for i in range(s_y)]
+                id1 = canvas.create_rectangle(step_x * 3, step_y * 3,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3,
+                                              size_canvas_y - step_y, fill="blue")
+                list_ids.append(id1)
+                id2 = canvas.create_rectangle(step_x * 3 + step_x // 2, step_y * 3 + step_y // 2,
+                                              size_canvas_x + menu_x + size_canvas_x - step_x * 3 - step_x // 2,
+                                              size_canvas_y - step_y - step_y // 2, fill="yellow")
+                list_ids.append(id2)
+                id3 = canvas.create_text(step_x * 12, step_y * 5, text=winner, font=("Arial", 50), justify=CENTER)
+                id4 = canvas.create_text(step_x * 12, step_y * 6, text=winner_add, font=("Arial", 25), justify=CENTER)
+                list_ids.append(id3)
+                list_ids.append(id4)
 
 canvas.bind_all("<Button-1>", add_to_all)
 canvas.bind_all("<Button-3>", add_to_all)
@@ -233,7 +296,7 @@ def generate_enemy_ships():
 
         # print(sum_1_enemy)
         # print(ships_list)
-        print(enemy_ships)
+        # print(enemy_ships)
     return(enemy_ships)
 
 generate_ships_list()
