@@ -34,9 +34,11 @@ hod_igrovomu_polu_1 = False
 computer_vs_human = True
 if computer_vs_human:
     add_to_label = " (Компьютер)"
+    add_to_label2 = " (прицеливается)"
     hod_igrovomu_polu_1 = False
 else:
     add_to_label = ""
+    add_to_label2 = ""
     hod_igrovomu_polu_1 = False
 
 def on_closing():
@@ -80,20 +82,46 @@ t0.configure(bg="#f0f0f0")
 t3 = Label(tk, text="@@@@@@@", font=("Helvetica", 16))
 t3.place(x=size_canvas_x + menu_x//2 - t3.winfo_reqwidth() // 2, y= size_canvas_y)
 
+def change_rb():
+    global computer_vs_human, add_to_label, add_to_label2
+    print(rb_var.get())
+    if rb_var.get():
+        computer_vs_human = True
+        add_to_label = " (Компьютер)"
+        add_to_label2 = " (прицеливается)"
+    else:
+        computer_vs_human = False
+        add_to_label = ""
+        add_to_label2 = ""
+
+rb_var = BooleanVar()
+rb1 = Radiobutton(tk, text="Human vs Computer", variable = rb_var, value=1, command=change_rb)
+rb2 = Radiobutton(tk, text="Human vs Human", variable = rb_var, value=0, command=change_rb)
+rb1.place(x=size_canvas_x + 20, y=140)
+rb2.place(x=size_canvas_x + 20, y=160)
+if computer_vs_human:
+    rb1.select()
 
 def mark_igrok(igrok_mark_1):
     if igrok_mark_1:
         t0.configure(bg="red")
+        t0.configure(text="Игрок №1"+add_to_label2)
+        t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t1.configure(text="Игрок №2" + add_to_label)
+        t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
         t1.configure(bg="#f0f0f0")
         t3.configure(text="Ход Игрока №2"+add_to_label)
         t3.place(x=size_canvas_x + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
     else:
         t1.configure(bg="red")
         t0.configure(bg="#f0f0f0")
+        t0.configure(text="Игрок №1")
+        t0.place(x=size_canvas_x // 2 - t0.winfo_reqwidth() // 2, y=size_canvas_y + 3)
+        t1.configure(text="Игрок №2" + add_to_label)
+        t1.place(x=size_canvas_x + menu_x + size_canvas_x // 2 - t1.winfo_reqwidth() // 2, y=size_canvas_y + 3)
         t3.configure(text="Ход Игрока №1")
         t3.place(x=size_canvas_x + menu_x // 2 - t3.winfo_reqwidth() // 2, y=size_canvas_y)
 mark_igrok(hod_igrovomu_polu_1)
-
 
 def button_show_enemy1():
     for i in range(0, s_x):
